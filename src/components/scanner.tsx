@@ -7,7 +7,6 @@ import { identify } from "@/lib/identify.functions";
 import { fileToScaledDataUrl, scaleDataUrl } from "@/lib/image";
 import { addScan } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 type Mode = "idle" | "camera" | "analyzing";
 

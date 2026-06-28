@@ -134,7 +134,7 @@ export function Scanner() {
             <button
               onClick={captureFromCamera}
               aria-label="Capture"
-              className="flex h-18 w-18 items-center justify-center rounded-full border-4 border-white bg-white/20 backdrop-blur transition-transform active:scale-95"
+              className="flex items-center justify-center rounded-full border-4 border-white bg-white/20 backdrop-blur transition-transform active:scale-95"
               style={{ height: 72, width: 72 }}
             >
               <span className="h-14 w-14 rounded-full bg-white" />

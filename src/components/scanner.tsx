@@ -220,8 +220,38 @@ export function Scanner() {
             <Zap className="h-3.5 w-3.5 text-primary" />
             Instant results · 14+ categories · Confidence scoring
           </p>
+
+          <div className="mx-auto mt-5 flex max-w-md items-center justify-center">
+            {quota.premium ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-secondary/40 px-3 py-1 text-xs font-medium text-primary">
+                <InfinityIcon className="h-3.5 w-3.5" />
+                Premium · unlimited scans
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
+                {quota.remaining > 0 ? (
+                  <>
+                    {quota.remaining} free {quota.remaining === 1 ? "scan" : "scans"} left today ·{" "}
+                  </>
+                ) : (
+                  <>No free scans left today · </>
+                )}
+                <Link to="/premium" className="inline-flex items-center gap-1 text-primary hover:underline">
+                  <Crown className="h-3 w-3" />
+                  Go Premium
+                </Link>
+              </span>
+            )}
+          </div>
         </div>
       </div>
+
+      {ad && <AdOverlay variant={ad} onComplete={onAdComplete} />}
+      <PaywallDialog
+        open={paywallOpen}
+        onOpenChange={setPaywallOpen}
+        onWatchAd={handleWatchRewardedAd}
+      />
     </div>
   );
 }

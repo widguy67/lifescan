@@ -24,10 +24,10 @@ export function ScanResult({
   const [fav, setFav] = useState(record.favorite);
 
   const handleShare = async () => {
-    const text = `${record.commonName}${record.scientificName ? ` (${record.scientificName})` : ""} — identified with LifeScan AI at ${record.confidence}% confidence.\n\n${record.summary}`;
+    const text = `${record.commonName}${record.scientificName ? ` (${record.scientificName})` : ""} — identified with Lifescan at ${record.confidence}% confidence.\n\n${record.summary}`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: `LifeScan AI — ${record.commonName}`, text });
+        await navigator.share({ title: `Lifescan — ${record.commonName}`, text });
       } else {
         await navigator.clipboard.writeText(text);
         toast.success("Result copied to clipboard");
@@ -48,7 +48,7 @@ export function ScanResult({
         <div className="relative">
           <img
             src={record.image}
-            alt={`${record.commonName} — identified by LifeScan AI`}
+            alt={`${record.commonName} — identified by Lifescan`}
             className="h-64 w-full object-cover sm:h-80"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />

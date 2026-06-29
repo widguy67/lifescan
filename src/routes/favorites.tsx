@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/favorites")({
   head: () => ({
     meta: [
-      { title: "Favorites — LifeScan AI" },
+      { title: "Favorites — Lifescan" },
       { name: "description", content: "Your saved species and identifications, ready to revisit anytime." },
     ],
   }),

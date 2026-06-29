@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/scan/$id")({
   head: () => ({
     meta: [
-      { title: "Identification Result — LifeScan AI" },
+      { title: "Identification Result — Lifescan" },
       { name: "description", content: "Detailed AI identification result with confidence score, expert facts and similar species." },
     ],
   }),

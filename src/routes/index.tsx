@@ -11,7 +11,7 @@ import { toggleFavorite } from "@/lib/storage";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LifeScan AI — Instant Plant, Animal & Nature Identifier" },
+      { title: "Lifescan — Instant Plant, Animal & Nature Identifier" },
       {
         name: "description",
         content:
@@ -61,7 +61,7 @@ function Index() {
             Identify <span className="text-gradient">anything</span> in nature
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-            From a single photo, LifeScan AI tells you exactly what you're looking at — with expert-level detail you can trust.
+            From a single photo, Lifescan tells you exactly what you're looking at — with expert-level detail you can trust.
           </p>
         </div>
         <Scanner />

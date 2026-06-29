@@ -80,15 +80,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1" },
-      { title: "LifeScan AI — Instant Plant, Animal & Nature Identifier" },
+      { title: "Lifescan — Instant Plant, Animal & Nature Identifier" },
       {
         name: "description",
         content:
           "Identify plants, animals, fish, birds, insects, mushrooms, food and minerals instantly with AI. Scan with your camera or import a photo and get expert details in seconds.",
       },
-      { name: "author", content: "LifeScan AI" },
+      { name: "author", content: "Lifescan" },
       { name: "theme-color", content: "#1f7a4d" },
-      { property: "og:title", content: "LifeScan AI — Instant Nature Identifier" },
+      { property: "og:title", content: "Lifescan — Instant Nature Identifier" },
       {
         property: "og:description",
         content:
@@ -96,7 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@LifeScanAI" },
+      { name: "twitter:site", content: "@Lifescan" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

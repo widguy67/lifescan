@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Camera, ImagePlus, X, Loader2, ScanLine, Zap } from "lucide-react";
+import { Camera, ImagePlus, X, Loader2, ScanLine, Zap, Crown, Infinity as InfinityIcon } from "lucide-react";
 import { identify } from "@/lib/identify.functions";
 import { fileToScaledDataUrl, scaleDataUrl } from "@/lib/image";
 import { addScan } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
+import { AdOverlay } from "@/components/ad-overlay";
+import { PaywallDialog } from "@/components/paywall-dialog";
+import { useQuota } from "@/hooks/use-quota";
+import { canScan, grantBonusScan, recordScan, isPremium } from "@/lib/quota";
+import type { ScanRecord } from "@/lib/types";
 
 type Mode = "idle" | "camera" | "analyzing";
 

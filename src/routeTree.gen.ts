@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as PremiumRouteImport } from './routes/premium'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,6 +19,11 @@ import { Route as ScanIdRouteImport } from './routes/scan.$id'
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PremiumRoute = PremiumRouteImport.update({
+  id: '/premium',
+  path: '/premium',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/favorites': typeof FavoritesRoute
   '/history': typeof HistoryRoute
+  '/premium': typeof PremiumRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/scan/$id': typeof ScanIdRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/favorites': typeof FavoritesRoute
   '/history': typeof HistoryRoute
+  '/premium': typeof PremiumRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/scan/$id': typeof ScanIdRoute
 }
@@ -60,19 +68,33 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/favorites': typeof FavoritesRoute
   '/history': typeof HistoryRoute
+  '/premium': typeof PremiumRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/scan/$id': typeof ScanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/favorites' | '/history' | '/sitemap.xml' | '/scan/$id'
+  fullPaths:
+    | '/'
+    | '/favorites'
+    | '/history'
+    | '/premium'
+    | '/sitemap.xml'
+    | '/scan/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/favorites' | '/history' | '/sitemap.xml' | '/scan/$id'
+  to:
+    | '/'
+    | '/favorites'
+    | '/history'
+    | '/premium'
+    | '/sitemap.xml'
+    | '/scan/$id'
   id:
     | '__root__'
     | '/'
     | '/favorites'
     | '/history'
+    | '/premium'
     | '/sitemap.xml'
     | '/scan/$id'
   fileRoutesById: FileRoutesById
@@ -81,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FavoritesRoute: typeof FavoritesRoute
   HistoryRoute: typeof HistoryRoute
+  PremiumRoute: typeof PremiumRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ScanIdRoute: typeof ScanIdRoute
 }
@@ -92,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/premium': {
+      id: '/premium'
+      path: '/premium'
+      fullPath: '/premium'
+      preLoaderRoute: typeof PremiumRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/history': {
@@ -129,6 +159,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FavoritesRoute: FavoritesRoute,
   HistoryRoute: HistoryRoute,
+  PremiumRoute: PremiumRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ScanIdRoute: ScanIdRoute,
 }

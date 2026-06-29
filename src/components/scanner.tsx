@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { AdOverlay } from "@/components/ad-overlay";
 import { PaywallDialog } from "@/components/paywall-dialog";
 import { useQuota } from "@/hooks/use-quota";
-import { canScan, grantBonusScan, recordScan, isPremium } from "@/lib/quota";
+import { canScan, grantBonusScan, recordScan, isPremium, FREE_DAILY_SCANS } from "@/lib/quota";
 import type { ScanRecord } from "@/lib/types";
 
 type Mode = "idle" | "camera" | "analyzing";

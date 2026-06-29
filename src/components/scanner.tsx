@@ -30,6 +30,9 @@ export function Scanner() {
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [pendingRecord, setPendingRecord] = useState<ScanRecord | null>(null);
   const [ad, setAd] = useState<null | "interstitial" | "rewarded">(null);
+  const remaining = quota.premium ? Infinity : Math.max(0, FREE_DAILY_SCANS + quota.bonus - quota.used);
+
+
 
   useEffect(() => {
     return () => stopCamera();

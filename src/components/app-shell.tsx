@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Leaf, Compass, History, Heart, Moon, Sun, Crown } from "lucide-react";
+import { Leaf, Compass, History, Heart, Moon, Sun, Crown, LogIn, LogOut } from "lucide-react";
 import { useTheme } from "./theme-provider";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 

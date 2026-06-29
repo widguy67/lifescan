@@ -25,6 +25,11 @@ export function Scanner() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>("idle");
   const [step, setStep] = useState(0);
+  const quota = useQuota();
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
+  const [pendingRecord, setPendingRecord] = useState<ScanRecord | null>(null);
+  const [ad, setAd] = useState<null | "interstitial" | "rewarded">(null);
 
   useEffect(() => {
     return () => stopCamera();

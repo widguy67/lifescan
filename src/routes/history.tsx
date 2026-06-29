@@ -12,8 +12,8 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
-      { title: "Scan History — LifeScan AI" },
-      { name: "description", content: "Browse, search and manage every species and object you've identified with LifeScan AI." },
+      { title: "Scan History — Lifescan" },
+      { name: "description", content: "Browse, search and manage every species and object you've identified with Lifescan." },
     ],
   }),
   component: HistoryPage,

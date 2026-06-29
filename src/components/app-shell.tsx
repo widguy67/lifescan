@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Leaf, Compass, History, Heart, Moon, Sun, Crown } from "lucide-react";
+import { Leaf, Compass, History, Heart, Moon, Sun, Crown, LogIn, LogOut } from "lucide-react";
 import { useTheme } from "./theme-provider";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -13,6 +14,7 @@ const NAV = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { theme, toggle } = useTheme();
+  const { user, signOut } = useAuth();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   return (
@@ -24,7 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Leaf className="h-5 w-5 text-primary-foreground" />
             </span>
             <span className="font-display text-lg font-bold tracking-tight">
-              LifeScan <span className="text-gradient">AI</span>
+              Life<span className="text-gradient">scan</span>
             </span>
           </Link>
 
@@ -49,13 +51,34 @@ export function AppShell({ children }: { children: ReactNode }) {
             })}
           </nav>
 
-          <button
-            onClick={toggle}
-            aria-label="Toggle theme"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggle}
+              aria-label="Toggle theme"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            {user ? (
+              <button
+                onClick={() => signOut()}
+                title={user.email ?? "Sign out"}
+                className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign out</span>
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="flex h-9 items-center gap-1.5 rounded-full bg-secondary px-3 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+              >
+                <LogIn className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign in</span>
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 

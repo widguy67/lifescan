@@ -51,13 +51,34 @@ export function AppShell({ children }: { children: ReactNode }) {
             })}
           </nav>
 
-          <button
-            onClick={toggle}
-            aria-label="Toggle theme"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggle}
+              aria-label="Toggle theme"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            {user ? (
+              <button
+                onClick={() => signOut()}
+                title={user.email ?? "Sign out"}
+                className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign out</span>
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="flex h-9 items-center gap-1.5 rounded-full bg-secondary px-3 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+              >
+                <LogIn className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign in</span>
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 

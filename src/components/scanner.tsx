@@ -78,7 +78,7 @@ export function Scanner() {
     const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
     stopCamera();
     const scaled = await scaleDataUrl(dataUrl);
-    await analyze(scaled);
+    startScan(scaled);
   }
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -87,10 +87,20 @@ export function Scanner() {
     if (!file) return;
     try {
       const dataUrl = await fileToScaledDataUrl(file);
-      await analyze(dataUrl);
+      startScan(dataUrl);
     } catch {
       toast.error("Could not read that image.");
     }
+  }
+
+  /** Gate every scan through the daily quota / paywall before analyzing. */
+  function startScan(image: string) {
+    if (!isPremium() && !canScan()) {
+      setPendingImage(image);
+      setPaywallOpen(true);
+      return;
+    }
+    analyze(image);
   }
 
   async function analyze(image: string) {
@@ -98,12 +108,41 @@ export function Scanner() {
     try {
       const result = await runIdentify({ data: { image } });
       const record = addScan(result, image);
-      navigate({ to: "/scan/$id", params: { id: record.id } });
+      if (isPremium()) {
+        navigate({ to: "/scan/$id", params: { id: record.id } });
+        return;
+      }
+      // Free users: count the scan and show an ad before revealing the result.
+      recordScan();
+      setPendingRecord(record);
+      setAd("interstitial");
+      setMode("idle");
     } catch (err) {
       setMode("idle");
       toast.error(err instanceof Error ? err.message : "Identification failed. Please try again.");
     }
   }
+
+  function handleWatchRewardedAd() {
+    setPaywallOpen(false);
+    setAd("rewarded");
+  }
+
+  function onAdComplete() {
+    const variant = ad;
+    setAd(null);
+    if (variant === "interstitial") {
+      const record = pendingRecord;
+      setPendingRecord(null);
+      if (record) navigate({ to: "/scan/$id", params: { id: record.id } });
+    } else if (variant === "rewarded") {
+      grantBonusScan();
+      const image = pendingImage;
+      setPendingImage(null);
+      if (image) analyze(image);
+    }
+  }
+
 
   if (mode === "analyzing") {
     return (

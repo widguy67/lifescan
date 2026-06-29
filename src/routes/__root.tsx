@@ -89,7 +89,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "Lifescan" },
       { name: "theme-color", content: "#1f7a4d" },
-      { property: "og:title", content: "Lifescan — Instant Nature Identifier" },
+      { property: "og:title", content: "Lifescan — Instant Plant, Animal & Nature Identifier" },
       {
         property: "og:description",
         content:
@@ -98,6 +98,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lifescan" },
+      { name: "twitter:title", content: "Lifescan — Instant Plant, Animal & Nature Identifier" },
+      { name: "description", content: "LifeScan identifies nature and objects from photos , providing detailed information and insights." },
+      { property: "og:description", content: "LifeScan identifies nature and objects from photos , providing detailed information and insights." },
+      { name: "twitter:description", content: "LifeScan identifies nature and objects from photos , providing detailed information and insights." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/8Ks48BDPiLOk2saFNtcQh8WsRIy1/social-images/social-1782717172519-ChatGPT_Image_29_juin_2026,_10_05_04.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/8Ks48BDPiLOk2saFNtcQh8WsRIy1/social-images/social-1782717172519-ChatGPT_Image_29_juin_2026,_10_05_04.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

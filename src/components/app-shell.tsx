@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Leaf, Compass, History, Heart, Moon, Sun } from "lucide-react";
+import { Leaf, Compass, History, Heart, Moon, Sun, Crown } from "lucide-react";
 import { useTheme } from "./theme-provider";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
@@ -8,6 +8,7 @@ const NAV = [
   { to: "/", label: "Scan", icon: Compass },
   { to: "/history", label: "History", icon: History },
   { to: "/favorites", label: "Favorites", icon: Heart },
+  { to: "/premium", label: "Premium", icon: Crown },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {

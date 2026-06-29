@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Camera, ImagePlus, X, Loader2, ScanLine, Zap } from "lucide-react";
+import { Camera, ImagePlus, X, Loader2, ScanLine, Zap, Crown, Infinity as InfinityIcon } from "lucide-react";
 import { identify } from "@/lib/identify.functions";
 import { fileToScaledDataUrl, scaleDataUrl } from "@/lib/image";
 import { addScan } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
+import { AdOverlay } from "@/components/ad-overlay";
+import { PaywallDialog } from "@/components/paywall-dialog";
+import { useQuota } from "@/hooks/use-quota";
+import { canScan, grantBonusScan, recordScan, isPremium, FREE_DAILY_SCANS } from "@/lib/quota";
+import type { ScanRecord } from "@/lib/types";
 
 type Mode = "idle" | "camera" | "analyzing";
 
@@ -20,6 +25,14 @@ export function Scanner() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>("idle");
   const [step, setStep] = useState(0);
+  const quota = useQuota();
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
+  const [pendingRecord, setPendingRecord] = useState<ScanRecord | null>(null);
+  const [ad, setAd] = useState<null | "interstitial" | "rewarded">(null);
+  const remaining = quota.premium ? Infinity : Math.max(0, FREE_DAILY_SCANS + quota.bonus - quota.used);
+
+
 
   useEffect(() => {
     return () => stopCamera();
@@ -68,7 +81,7 @@ export function Scanner() {
     const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
     stopCamera();
     const scaled = await scaleDataUrl(dataUrl);
-    await analyze(scaled);
+    startScan(scaled);
   }
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -77,10 +90,20 @@ export function Scanner() {
     if (!file) return;
     try {
       const dataUrl = await fileToScaledDataUrl(file);
-      await analyze(dataUrl);
+      startScan(dataUrl);
     } catch {
       toast.error("Could not read that image.");
     }
+  }
+
+  /** Gate every scan through the daily quota / paywall before analyzing. */
+  function startScan(image: string) {
+    if (!isPremium() && !canScan()) {
+      setPendingImage(image);
+      setPaywallOpen(true);
+      return;
+    }
+    analyze(image);
   }
 
   async function analyze(image: string) {
@@ -88,12 +111,41 @@ export function Scanner() {
     try {
       const result = await runIdentify({ data: { image } });
       const record = addScan(result, image);
-      navigate({ to: "/scan/$id", params: { id: record.id } });
+      if (isPremium()) {
+        navigate({ to: "/scan/$id", params: { id: record.id } });
+        return;
+      }
+      // Free users: count the scan and show an ad before revealing the result.
+      recordScan();
+      setPendingRecord(record);
+      setAd("interstitial");
+      setMode("idle");
     } catch (err) {
       setMode("idle");
       toast.error(err instanceof Error ? err.message : "Identification failed. Please try again.");
     }
   }
+
+  function handleWatchRewardedAd() {
+    setPaywallOpen(false);
+    setAd("rewarded");
+  }
+
+  function onAdComplete() {
+    const variant = ad;
+    setAd(null);
+    if (variant === "interstitial") {
+      const record = pendingRecord;
+      setPendingRecord(null);
+      if (record) navigate({ to: "/scan/$id", params: { id: record.id } });
+    } else if (variant === "rewarded") {
+      grantBonusScan();
+      const image = pendingImage;
+      setPendingImage(null);
+      if (image) analyze(image);
+    }
+  }
+
 
   if (mode === "analyzing") {
     return (
@@ -171,8 +223,39 @@ export function Scanner() {
             <Zap className="h-3.5 w-3.5 text-primary" />
             Instant results · 14+ categories · Confidence scoring
           </p>
+
+          <div className="mx-auto mt-5 flex max-w-md items-center justify-center">
+            {quota.premium ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-secondary/40 px-3 py-1 text-xs font-medium text-primary">
+                <InfinityIcon className="h-3.5 w-3.5" />
+                Premium · unlimited scans
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
+                {remaining > 0 ? (
+                  <>
+                    {remaining} free {remaining === 1 ? "scan" : "scans"} left today ·{" "}
+                  </>
+
+                ) : (
+                  <>No free scans left today · </>
+                )}
+                <Link to="/premium" className="inline-flex items-center gap-1 text-primary hover:underline">
+                  <Crown className="h-3 w-3" />
+                  Go Premium
+                </Link>
+              </span>
+            )}
+          </div>
         </div>
       </div>
+
+      {ad && <AdOverlay variant={ad} onComplete={onAdComplete} />}
+      <PaywallDialog
+        open={paywallOpen}
+        onOpenChange={setPaywallOpen}
+        onWatchAd={handleWatchRewardedAd}
+      />
     </div>
   );
 }

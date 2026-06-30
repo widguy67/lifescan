@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Camera } from "lucide-react";
 import { ScanResult } from "@/components/scan-result";
-import { getRecord, toggleFavorite } from "@/lib/storage";
-import type { ScanRecord } from "@/lib/types";
+import { useScans } from "@/hooks/use-scans";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/scan/$id")({
   head: () => ({
     meta: [
-      { title: "Identification Result — Lifescan" },
+      { title: "Identification Result — Scany" },
       { name: "description", content: "Detailed AI identification result with confidence score, expert facts and similar species." },
     ],
   }),
@@ -19,13 +17,10 @@ export const Route = createFileRoute("/scan/$id")({
 function ScanDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const [record, setRecord] = useState<ScanRecord | null | undefined>(undefined);
+  const { getRecord, toggleFavorite, loading } = useScans();
+  const record = getRecord(id);
 
-  useEffect(() => {
-    setRecord(getRecord(id) ?? null);
-  }, [id]);
-
-  if (record === undefined) {
+  if (loading && !record) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -33,11 +28,11 @@ function ScanDetail() {
     );
   }
 
-  if (record === null) {
+  if (!record) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-border py-20 text-center">
         <p className="font-display text-lg font-semibold">Result not found</p>
-        <p className="max-w-xs text-sm text-muted-foreground">This scan may have been removed from this device.</p>
+        <p className="max-w-xs text-sm text-muted-foreground">This scan may have been removed or isn't synced to this account.</p>
         <Button asChild variant="hero">
           <Link to="/">
             <Camera className="h-4 w-4" />
@@ -66,13 +61,7 @@ function ScanDetail() {
         </Button>
       </div>
 
-      <ScanResult
-        record={record}
-        onToggleFavorite={() => {
-          toggleFavorite(record.id);
-          setRecord(getRecord(record.id) ?? null);
-        }}
-      />
+      <ScanResult record={record} onToggleFavorite={() => toggleFavorite(record.id)} />
     </div>
   );
 }

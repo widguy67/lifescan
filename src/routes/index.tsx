@@ -5,13 +5,12 @@ import {
 } from "lucide-react";
 import { Scanner } from "@/components/scanner";
 import { ScanCard } from "@/components/scan-card";
-import { useHistory } from "@/hooks/use-history";
-import { toggleFavorite } from "@/lib/storage";
+import { useScans } from "@/hooks/use-scans";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Lifescan — Instant Plant, Animal & Nature Identifier" },
+      { title: "Scany — Instant Plant, Animal & Nature Identifier" },
       {
         name: "description",
         content:
@@ -45,8 +44,8 @@ const HIGHLIGHTS = [
 ];
 
 function Index() {
-  const history = useHistory();
-  const recent = history.slice(0, 6);
+  const { records, toggleFavorite } = useScans();
+  const recent = records.slice(0, 6);
 
   return (
     <div className="space-y-10">
@@ -61,7 +60,7 @@ function Index() {
             Identify <span className="text-gradient">anything</span> in nature
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-            From a single photo, Lifescan tells you exactly what you're looking at — with expert-level detail you can trust.
+            From a single photo, Scany tells you exactly what you're looking at — with expert-level detail you can trust.
           </p>
         </div>
         <Scanner />

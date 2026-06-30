@@ -13,10 +13,11 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider } from "../components/theme-provider";
 import { AuthProvider } from "../hooks/use-auth";
+import { ScansProvider } from "../hooks/use-scans";
 import { AppShell } from "../components/app-shell";
 import { Toaster } from "../components/ui/sonner";
 
-const THEME_INIT = `(function(){try{var t=localStorage.getItem('lifescan.theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}if(t==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`;
+const THEME_INIT = `(function(){try{var t=localStorage.getItem('scany.theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}if(t==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`;
 
 function NotFoundComponent() {
   return (
@@ -81,15 +82,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1" },
-      { title: "Lifescan — Instant Plant, Animal & Nature Identifier" },
+      { title: "Scany — Instant Plant, Animal & Nature Identifier" },
       {
         name: "description",
         content:
           "Identify plants, animals, fish, birds, insects, mushrooms, food and minerals instantly with AI. Scan with your camera or import a photo and get expert details in seconds.",
       },
-      { name: "author", content: "Lifescan" },
+      { name: "author", content: "Scany" },
       { name: "theme-color", content: "#1f7a4d" },
-      { property: "og:title", content: "Lifescan — Instant Plant, Animal & Nature Identifier" },
+      { property: "og:title", content: "Scany — Instant Plant, Animal & Nature Identifier" },
       {
         property: "og:description",
         content:
@@ -97,11 +98,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lifescan" },
-      { name: "twitter:title", content: "Lifescan — Instant Plant, Animal & Nature Identifier" },
-      { name: "description", content: "LifeScan identifies nature and objects from photos , providing detailed information and insights." },
-      { property: "og:description", content: "LifeScan identifies nature and objects from photos , providing detailed information and insights." },
-      { name: "twitter:description", content: "LifeScan identifies nature and objects from photos , providing detailed information and insights." },
+      { name: "twitter:site", content: "@Scany" },
+      { name: "twitter:title", content: "Scany — Instant Plant, Animal & Nature Identifier" },
+      { name: "twitter:description", content: "Scany identifies nature and objects from photos, providing detailed information and insights." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/8Ks48BDPiLOk2saFNtcQh8WsRIy1/social-images/social-1782717172519-ChatGPT_Image_29_juin_2026,_10_05_04.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/8Ks48BDPiLOk2saFNtcQh8WsRIy1/social-images/social-1782717172519-ChatGPT_Image_29_juin_2026,_10_05_04.webp" },
     ],
@@ -143,11 +142,13 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <AppShell>
-            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <Outlet />
-          </AppShell>
-          <Toaster position="top-center" richColors />
+          <ScansProvider>
+            <AppShell>
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+            </AppShell>
+            <Toaster position="top-center" richColors />
+          </ScansProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

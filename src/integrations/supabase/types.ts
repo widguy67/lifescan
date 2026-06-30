@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      scans: {
+        Row: {
+          category: string
+          common_name: string
+          confidence: number
+          created_at: string
+          favorite: boolean
+          id: string
+          image: string | null
+          payload: Json
+          scientific_name: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          common_name: string
+          confidence?: number
+          created_at?: string
+          favorite?: boolean
+          id: string
+          image?: string | null
+          payload: Json
+          scientific_name?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          common_name?: string
+          confidence?: number
+          created_at?: string
+          favorite?: boolean
+          id?: string
+          image?: string | null
+          payload?: Json
+          scientific_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

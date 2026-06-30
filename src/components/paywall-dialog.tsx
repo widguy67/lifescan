@@ -42,7 +42,7 @@ export function PaywallDialog({ open, onOpenChange, onWatchAd }: PaywallDialogPr
           <div className="rounded-2xl border border-primary/30 bg-secondary/40 p-4">
             <div className="flex items-center gap-2">
               <Crown className="h-4 w-4 text-primary" />
-              <span className="font-display text-sm font-bold">Lifescan Premium</span>
+              <span className="font-display text-sm font-bold">Scany Premium</span>
             </div>
             <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">

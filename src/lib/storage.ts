@@ -1,6 +1,6 @@
 import type { IdentificationResult, ScanRecord } from "./types";
 
-const KEY = "lifescan.history.v1";
+const KEY = "scany.history.v1";
 
 function read(): ScanRecord[] {
   if (typeof window === "undefined") return [];
@@ -24,32 +24,35 @@ function write(records: ScanRecord[]) {
       /* ignore */
     }
   }
-  window.dispatchEvent(new Event("lifescan:update"));
+  window.dispatchEvent(new Event("scany:update"));
 }
 
-export function getHistory(): ScanRecord[] {
+export function getLocalHistory(): ScanRecord[] {
   return read().sort((a, b) => b.createdAt - a.createdAt);
 }
 
-export function getRecord(id: string): ScanRecord | undefined {
+export function getLocalRecord(id: string): ScanRecord | undefined {
   return read().find((r) => r.id === id);
 }
 
-export function addScan(result: IdentificationResult, image: string): ScanRecord {
-  const record: ScanRecord = {
+/** Build a fresh scan record from an identification result. */
+export function buildRecord(result: IdentificationResult, image: string): ScanRecord {
+  return {
     ...result,
     id: crypto.randomUUID(),
     createdAt: Date.now(),
     image,
     favorite: false,
   };
+}
+
+export function addLocalRecord(record: ScanRecord) {
   const records = read();
   records.unshift(record);
   write(records.slice(0, 200));
-  return record;
 }
 
-export function toggleFavorite(id: string): boolean {
+export function toggleLocalFavorite(id: string): boolean {
   const records = read();
   const rec = records.find((r) => r.id === id);
   if (!rec) return false;
@@ -58,10 +61,10 @@ export function toggleFavorite(id: string): boolean {
   return rec.favorite;
 }
 
-export function deleteRecord(id: string) {
+export function deleteLocalRecord(id: string) {
   write(read().filter((r) => r.id !== id));
 }
 
-export function clearHistory() {
+export function clearLocalHistory() {
   write([]);
 }

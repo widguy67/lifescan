@@ -11,11 +11,11 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Lifescan" },
+      { title: "Sign in — Scany" },
       {
         name: "description",
         content:
-          "Sign in or create your free Lifescan account to sync your scans, history and favorites across devices.",
+          "Sign in or create your free Scany account to sync your scans, history and favorites across devices.",
       },
     ],
   }),
@@ -88,7 +88,7 @@ function AuthPage() {
           <Leaf className="h-5 w-5 text-primary-foreground" />
         </span>
         <span className="font-display text-xl font-bold tracking-tight">
-          Life<span className="text-gradient">scan</span>
+          Sca<span className="text-gradient">ny</span>
         </span>
       </Link>
 
@@ -99,7 +99,7 @@ function AuthPage() {
         <p className="mt-1 text-center text-sm text-muted-foreground">
           {mode === "signin"
             ? "Sign in to access your scans and favorites."
-            : "Join Lifescan to save your discoveries."}
+            : "Join Scany to save your discoveries."}
         </p>
 
         <Button
@@ -152,7 +152,7 @@ function AuthPage() {
         </form>
 
         <p className="mt-5 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? "New to Lifescan?" : "Already have an account?"}{" "}
+          {mode === "signin" ? "New to Scany?" : "Already have an account?"}{" "}
           <button
             type="button"
             onClick={() => setMode(mode === "signin" ? "signup" : "signin")}

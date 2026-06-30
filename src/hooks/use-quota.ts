@@ -8,11 +8,11 @@ export function useQuota(): QuotaState {
 
   useEffect(() => {
     refresh();
-    window.addEventListener("lifescan:quota", refresh);
+    window.addEventListener("scany:quota", refresh);
     window.addEventListener("storage", refresh);
     window.addEventListener("focus", refresh);
     return () => {
-      window.removeEventListener("lifescan:quota", refresh);
+      window.removeEventListener("scany:quota", refresh);
       window.removeEventListener("storage", refresh);
       window.removeEventListener("focus", refresh);
     };

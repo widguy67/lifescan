@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Camera, ImagePlus, X, Loader2, ScanLine, Zap, Crown, Infinity as InfinityIcon } from "lucide-react";
 import { identify } from "@/lib/identify.functions";
 import { fileToScaledDataUrl, scaleDataUrl } from "@/lib/image";
-import { addScan } from "@/lib/storage";
+import { useScans } from "@/hooks/use-scans";
 import { Button } from "@/components/ui/button";
 import { AdOverlay } from "@/components/ad-overlay";
 import { PaywallDialog } from "@/components/paywall-dialog";
@@ -19,6 +19,7 @@ const STEPS = ["Reading the image…", "Matching against millions of species…"
 
 export function Scanner() {
   const navigate = useNavigate();
+  const { addScan } = useScans();
   const runIdentify = useServerFn(identify);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -110,7 +111,7 @@ export function Scanner() {
     setMode("analyzing");
     try {
       const result = await runIdentify({ data: { image } });
-      const record = addScan(result, image);
+      const record = await addScan(result, image);
       if (isPremium()) {
         navigate({ to: "/scan/$id", params: { id: record.id } });
         return;

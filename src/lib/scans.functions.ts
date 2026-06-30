@@ -39,7 +39,7 @@ export const listCloudScans = createServerFn({ method: "GET" })
       .select("*")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return (data as ScanRow[]).map(rowToRecord);
+    return (data as unknown as ScanRow[]).map(rowToRecord);
   });
 
 /** Insert (or upsert) one scan for the signed-in user. */
@@ -70,7 +70,7 @@ export const saveCloudScan = createServerFn({ method: "POST" })
       scientific_name: r.scientificName ?? "",
       confidence: Math.round(r.confidence) || 0,
       image: r.image || null,
-      payload,
+      payload: payload as unknown as Json,
     });
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -103,7 +103,7 @@ export const bulkSaveCloudScans = createServerFn({ method: "POST" })
         sections: r.sections,
         similar: r.similar,
         funFact: r.funFact,
-      } satisfies IdentificationResult,
+      } as unknown as Json,
     }));
     const { error } = await supabase.from("scans").upsert(rows, { onConflict: "id", ignoreDuplicates: true });
     if (error) throw new Error(error.message);

@@ -16,7 +16,7 @@ export const PRICING = {
   yearly: { price: "€49.99", period: "year", amount: 49.99 },
 } as const;
 
-const KEY = "lifescan.quota.v1";
+const KEY = "scany.quota.v1";
 
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10);
@@ -58,7 +58,7 @@ function write(state: QuotaState) {
   } catch {
     /* ignore */
   }
-  window.dispatchEvent(new Event("lifescan:quota"));
+  window.dispatchEvent(new Event("scany:quota"));
 }
 
 export function getQuota(): QuotaState {

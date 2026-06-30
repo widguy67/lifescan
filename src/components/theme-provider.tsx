@@ -13,7 +13,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const stored = (localStorage.getItem("lifescan.theme") as Theme | null) ?? null;
+    const stored = (localStorage.getItem("scany.theme") as Theme | null) ?? null;
     const initial: Theme =
       stored ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     setTheme(initial);
@@ -22,7 +22,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("lifescan.theme", theme);
+    localStorage.setItem("scany.theme", theme);
   }, [theme]);
 
   return (

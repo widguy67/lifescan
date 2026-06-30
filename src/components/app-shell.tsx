@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Leaf className="h-5 w-5 text-primary-foreground" />
             </span>
             <span className="font-display text-lg font-bold tracking-tight">
-              Life<span className="text-gradient">scan</span>
+              Sca<span className="text-gradient">ny</span>
             </span>
           </Link>
 

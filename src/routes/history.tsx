@@ -2,8 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, History as HistoryIcon, Trash2 } from "lucide-react";
 import { ScanCard } from "@/components/scan-card";
-import { useHistory } from "@/hooks/use-history";
-import { toggleFavorite, deleteRecord, clearHistory } from "@/lib/storage";
+import { useScans } from "@/hooks/use-scans";
 import { CATEGORY_LABELS, type ScanCategory } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,15 +11,15 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
-      { title: "Scan History — Lifescan" },
-      { name: "description", content: "Browse, search and manage every species and object you've identified with Lifescan." },
+      { title: "Scan History — Scany" },
+      { name: "description", content: "Browse, search and manage every species and object you've identified with Scany." },
     ],
   }),
   component: HistoryPage,
 });
 
 function HistoryPage() {
-  const history = useHistory();
+  const { records: history, toggleFavorite, deleteRecord, clearHistory } = useScans();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<ScanCategory | "all">("all");
 

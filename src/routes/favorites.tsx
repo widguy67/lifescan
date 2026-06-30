@@ -1,14 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { ScanCard } from "@/components/scan-card";
-import { useHistory } from "@/hooks/use-history";
-import { toggleFavorite, deleteRecord } from "@/lib/storage";
+import { useScans } from "@/hooks/use-scans";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/favorites")({
   head: () => ({
     meta: [
-      { title: "Favorites — Lifescan" },
+      { title: "Favorites — Scany" },
       { name: "description", content: "Your saved species and identifications, ready to revisit anytime." },
     ],
   }),
@@ -16,7 +15,8 @@ export const Route = createFileRoute("/favorites")({
 });
 
 function FavoritesPage() {
-  const favorites = useHistory().filter((r) => r.favorite);
+  const { records, toggleFavorite, deleteRecord } = useScans();
+  const favorites = records.filter((r) => r.favorite);
 
   return (
     <div className="space-y-6">

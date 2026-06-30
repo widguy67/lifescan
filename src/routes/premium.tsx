@@ -10,11 +10,11 @@ import { activatePremium, cancelPremium, PRICING, type PremiumPlan } from "@/lib
 export const Route = createFileRoute("/premium")({
   head: () => ({
     meta: [
-      { title: "Lifescan Premium — Unlimited Ad-Free Identification" },
+      { title: "Scany Premium — Unlimited Ad-Free Identification" },
       {
         name: "description",
         content:
-          "Upgrade to Lifescan Premium for unlimited scans and an ad-free experience. €5.99/month or €49.99/year.",
+          "Upgrade to Scany Premium for unlimited scans and an ad-free experience. €5.99/month or €49.99/year.",
       },
     ],
   }),
@@ -54,7 +54,7 @@ function Premium() {
           <Crown className="h-8 w-8 text-primary-foreground" />
         </span>
         <h1 className="mt-4 font-display text-3xl font-extrabold">
-          Lifescan <span className="text-gradient">Premium</span>
+          Scany <span className="text-gradient">Premium</span>
         </h1>
         <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
           Scan without limits and skip every ad. Identify nature the moment you're curious.

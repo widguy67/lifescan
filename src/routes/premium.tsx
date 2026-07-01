@@ -132,9 +132,25 @@ function Premium() {
             />
           </div>
 
-          <Button variant="hero" size="xl" className="w-full" onClick={subscribe}>
-            <Crown className="h-5 w-5" />
-            Subscribe — {PRICING[selected].price}/{PRICING[selected].period}
+          <Button
+            variant="hero"
+            size="xl"
+            className="w-full"
+            onClick={subscribe}
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : user ? (
+              <Crown className="h-5 w-5" />
+            ) : (
+              <LogIn className="h-5 w-5" />
+            )}
+            {loading
+              ? "Opening secure checkout…"
+              : user
+                ? `Subscribe — ${PRICING[selected].price}/${PRICING[selected].period}`
+                : "Sign in to subscribe"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
             Free plan includes 2 scans per day plus rewarded ads.

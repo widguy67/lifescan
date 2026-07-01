@@ -16,6 +16,7 @@ const NAV = [
 export function AppShell({ children }: { children: ReactNode }) {
   const { theme, toggle } = useTheme();
   const { user, signOut } = useAuth();
+  useSubscriptionSync();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   return (

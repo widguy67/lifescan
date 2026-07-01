@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQuota } from "@/hooks/use-quota";
 import { useAuth } from "@/hooks/use-auth";
-import { cancelPremium, PRICING, type PremiumPlan } from "@/lib/quota";
+import { PRICING, type PremiumPlan } from "@/lib/quota";
 import { createCheckout } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/premium")({

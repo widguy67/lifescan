@@ -94,17 +94,10 @@ function Premium() {
           <p className="mt-1 text-sm text-muted-foreground">
             Active plan: {quota.plan === "yearly" ? "Yearly" : "Monthly"} · Unlimited ad-free scans.
           </p>
-          <Button
-            variant="outline"
-            size="lg"
-            className="mt-5"
-            onClick={() => {
-              cancelPremium();
-              toast("Premium cancelled. You're back on the free plan.");
-            }}
-          >
-            Cancel Premium
-          </Button>
+          <p className="mt-4 text-xs text-muted-foreground">
+            Manage or cancel your subscription anytime from the billing link in your
+            payment confirmation email.
+          </p>
         </div>
       ) : (
         <>

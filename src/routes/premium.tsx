@@ -111,7 +111,7 @@ function Premium() {
             Subscribe — {PRICING[selected].price}/{PRICING[selected].period}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
-            Cancel anytime. Free plan includes 2 scans per day plus rewarded ads.
+            Free plan includes 2 scans per day plus rewarded ads.
           </p>
         </>
       )}

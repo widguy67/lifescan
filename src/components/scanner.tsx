@@ -2,8 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Camera, ImagePlus, X, Loader2, ScanLine, Zap, Crown, Infinity as InfinityIcon } from "lucide-react";
+import { Camera, ImagePlus, X, Loader2, ScanLine, Zap, Crown, Infinity as InfinityIcon, Barcode } from "lucide-react";
+import { BrowserMultiFormatReader } from "@zxing/browser";
+import { DecodeHintType, BarcodeFormat } from "@zxing/library";
+import type { IScannerControls } from "@zxing/browser";
 import { identify } from "@/lib/identify.functions";
+import { lookupBarcode } from "@/lib/barcode.functions";
 import { fileToScaledDataUrl, scaleDataUrl } from "@/lib/image";
 import { useScans } from "@/hooks/use-scans";
 import { Button } from "@/components/ui/button";
@@ -13,7 +17,7 @@ import { useQuota } from "@/hooks/use-quota";
 import { canScan, grantBonusScan, recordScan, isPremium, FREE_DAILY_SCANS } from "@/lib/quota";
 import type { ScanRecord } from "@/lib/types";
 
-type Mode = "idle" | "camera" | "analyzing";
+type Mode = "idle" | "camera" | "barcode" | "analyzing";
 
 const STEPS = ["Reading the image…", "Matching against millions of species…", "Compiling expert details…"];
 
@@ -21,8 +25,11 @@ export function Scanner() {
   const navigate = useNavigate();
   const { addScan } = useScans();
   const runIdentify = useServerFn(identify);
+  const runLookupBarcode = useServerFn(lookupBarcode);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const barcodeVideoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const barcodeControlsRef = useRef<IScannerControls | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>("idle");
   const [step, setStep] = useState(0);
@@ -36,7 +43,10 @@ export function Scanner() {
 
 
   useEffect(() => {
-    return () => stopCamera();
+    return () => {
+      stopCamera();
+      stopBarcode();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -50,6 +60,11 @@ export function Scanner() {
   function stopCamera() {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
+  }
+
+  function stopBarcode() {
+    barcodeControlsRef.current?.stop();
+    barcodeControlsRef.current = null;
   }
 
   async function startCamera() {
@@ -69,6 +84,41 @@ export function Scanner() {
     } catch {
       toast.error("Camera unavailable. Try importing a photo instead.");
       fileRef.current?.click();
+    }
+  }
+
+  async function startBarcode() {
+    if (!isPremium() && !canScan()) {
+      setPaywallOpen(true);
+      return;
+    }
+    setMode("barcode");
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.EAN_13,
+      BarcodeFormat.EAN_8,
+      BarcodeFormat.UPC_A,
+      BarcodeFormat.UPC_E,
+      BarcodeFormat.CODE_128,
+    ]);
+    const reader = new BrowserMultiFormatReader(hints);
+    try {
+      const controls = await reader.decodeFromConstraints(
+        { video: { facingMode: { ideal: "environment" } }, audio: false },
+        barcodeVideoRef.current!,
+        (result) => {
+          if (result) {
+            const code = result.getText();
+            stopBarcode();
+            analyzeBarcode(code);
+          }
+        },
+      );
+      barcodeControlsRef.current = controls;
+    } catch {
+      stopBarcode();
+      setMode("idle");
+      toast.error("Camera unavailable for barcode scanning.");
     }
   }
 
@@ -105,6 +155,38 @@ export function Scanner() {
       return;
     }
     analyze(image);
+  }
+
+  /** Capture the current barcode-camera frame as a lightweight image for the record. */
+  function captureBarcodeFrame(): string {
+    const video = barcodeVideoRef.current;
+    if (!video || !video.videoWidth) return "";
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")?.drawImage(video, 0, 0);
+    return canvas.toDataURL("image/jpeg", 0.85);
+  }
+
+  async function analyzeBarcode(code: string) {
+    const frame = captureBarcodeFrame();
+    setMode("analyzing");
+    try {
+      const result = await runLookupBarcode({ data: { code } });
+      const image = result.imageUrl || frame || "";
+      const record = await addScan(result, image);
+      if (isPremium()) {
+        navigate({ to: "/scan/$id", params: { id: record.id } });
+        return;
+      }
+      recordScan();
+      setPendingRecord(record);
+      setAd("interstitial");
+      setMode("idle");
+    } catch (err) {
+      setMode("idle");
+      toast.error(err instanceof Error ? err.message : "Barcode lookup failed. Please try again.");
+    }
   }
 
   async function analyze(image: string) {
@@ -162,6 +244,34 @@ export function Scanner() {
     );
   }
 
+  if (mode === "barcode") {
+    return (
+      <div className="overflow-hidden rounded-3xl border border-border bg-black shadow-elegant">
+        <div className="relative aspect-[3/4] w-full sm:aspect-video">
+          <video ref={barcodeVideoRef} playsInline muted className="h-full w-full object-cover" />
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute left-1/2 top-1/2 h-32 w-4/5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border-2 border-white/70">
+              <div className="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 bg-primary shadow-glow animate-pulse" />
+            </div>
+          </div>
+          <div className="absolute inset-x-0 top-4 text-center text-sm font-medium text-white/90">
+            Align the product barcode inside the frame
+          </div>
+          <button
+            onClick={() => {
+              stopBarcode();
+              setMode("idle");
+            }}
+            className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur"
+            aria-label="Close barcode scanner"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (mode === "camera") {
     return (
       <div className="overflow-hidden rounded-3xl border border-border bg-black shadow-elegant">
@@ -208,7 +318,7 @@ export function Scanner() {
           </div>
           <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Point. Scan. Discover.</h2>
           <p className="mx-auto mt-2 max-w-md text-center text-sm text-muted-foreground">
-            Identify plants, animals, fish, mushrooms, food, minerals and more in seconds with high-accuracy AI.
+            Identify plants, animals, fish, mushrooms, food and more — or scan a food barcode for instant nutrition facts.
           </p>
           <div className="mx-auto mt-7 flex max-w-md flex-col gap-3 sm:flex-row">
             <Button variant="hero" size="xl" className="flex-1" onClick={startCamera}>
@@ -220,9 +330,15 @@ export function Scanner() {
               Import photo
             </Button>
           </div>
+          <div className="mx-auto mt-3 flex max-w-md">
+            <Button variant="outline" size="xl" className="flex-1" onClick={startBarcode}>
+              <Barcode className="h-5 w-5" />
+              Scan food barcode
+            </Button>
+          </div>
           <p className="mt-5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
             <Zap className="h-3.5 w-3.5 text-primary" />
-            Instant results · 14+ categories · Confidence scoring
+            Instant results · 14+ categories · Barcode nutrition · Confidence scoring
           </p>
 
           <div className="mx-auto mt-5 flex max-w-md items-center justify-center">

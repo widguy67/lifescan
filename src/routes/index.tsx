@@ -57,7 +57,7 @@ function Index() {
             Powered by advanced vision AI
           </span>
           <h1 className="mt-4 font-display text-3xl font-extrabold leading-tight sm:text-5xl">
-            Identify <span className="text-gradient">anything</span> in nature
+            Identify <span className="text-gradient">anything</span>
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
             From a single photo, Scany tells you exactly what you're looking at — with expert-level detail you can trust.

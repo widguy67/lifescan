@@ -1,11 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Crown, Check, ScanLine, BadgeCheck, Zap, ArrowLeft } from "lucide-react";
+import { Crown, Check, ScanLine, BadgeCheck, Zap, ArrowLeft, Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQuota } from "@/hooks/use-quota";
-import { activatePremium, cancelPremium, PRICING, type PremiumPlan } from "@/lib/quota";
+import { useAuth } from "@/hooks/use-auth";
+import { cancelPremium, PRICING, type PremiumPlan } from "@/lib/quota";
+import { createCheckout } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/premium")({
   head: () => ({

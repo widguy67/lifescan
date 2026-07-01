@@ -34,12 +34,35 @@ const PERKS = [
 function Premium() {
   const navigate = useNavigate();
   const quota = useQuota();
+  const { user } = useAuth();
+  const startCheckout = useServerFn(createCheckout);
   const [selected, setSelected] = useState<PremiumPlan>("yearly");
+  const [loading, setLoading] = useState(false);
 
-  function subscribe() {
-    activatePremium(selected);
-    toast.success("Welcome to Premium! Enjoy unlimited, ad-free scans.");
-    navigate({ to: "/" });
+  // Surface a friendly message when returning from a successful checkout.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "success") {
+      toast.success("Payment received! Premium activates within a few seconds.");
+      window.history.replaceState({}, "", "/premium");
+    }
+  }, []);
+
+  async function subscribe() {
+    if (!user) {
+      toast("Sign in first to subscribe to Premium.");
+      navigate({ to: "/auth" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { url } = await startCheckout({ data: { plan: selected } });
+      window.location.href = url;
+    } catch (err) {
+      setLoading(false);
+      toast.error(err instanceof Error ? err.message : "Could not start checkout.");
+    }
   }
 
   return (

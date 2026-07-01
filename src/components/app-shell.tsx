@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Leaf, Compass, History, Heart, Moon, Sun, Crown, LogIn, LogOut } from "lucide-react";
 import { useTheme } from "./theme-provider";
 import { useAuth } from "@/hooks/use-auth";
+import { useSubscriptionSync } from "@/hooks/use-subscription-sync";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -15,6 +16,7 @@ const NAV = [
 export function AppShell({ children }: { children: ReactNode }) {
   const { theme, toggle } = useTheme();
   const { user, signOut } = useAuth();
+  useSubscriptionSync();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   return (

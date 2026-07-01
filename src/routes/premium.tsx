@@ -1,11 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Crown, Check, ScanLine, BadgeCheck, Zap, ArrowLeft } from "lucide-react";
+import { Crown, Check, ScanLine, BadgeCheck, Zap, ArrowLeft, Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQuota } from "@/hooks/use-quota";
-import { activatePremium, cancelPremium, PRICING, type PremiumPlan } from "@/lib/quota";
+import { useAuth } from "@/hooks/use-auth";
+import { PRICING, type PremiumPlan } from "@/lib/quota";
+import { createCheckout } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/premium")({
   head: () => ({
@@ -31,12 +34,35 @@ const PERKS = [
 function Premium() {
   const navigate = useNavigate();
   const quota = useQuota();
+  const { user } = useAuth();
+  const startCheckout = useServerFn(createCheckout);
   const [selected, setSelected] = useState<PremiumPlan>("yearly");
+  const [loading, setLoading] = useState(false);
 
-  function subscribe() {
-    activatePremium(selected);
-    toast.success("Welcome to Premium! Enjoy unlimited, ad-free scans.");
-    navigate({ to: "/" });
+  // Surface a friendly message when returning from a successful checkout.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "success") {
+      toast.success("Payment received! Premium activates within a few seconds.");
+      window.history.replaceState({}, "", "/premium");
+    }
+  }, []);
+
+  async function subscribe() {
+    if (!user) {
+      toast("Sign in first to subscribe to Premium.");
+      navigate({ to: "/auth" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { url } = await startCheckout({ data: { plan: selected } });
+      window.location.href = url;
+    } catch (err) {
+      setLoading(false);
+      toast.error(err instanceof Error ? err.message : "Could not start checkout.");
+    }
   }
 
   return (
@@ -68,17 +94,10 @@ function Premium() {
           <p className="mt-1 text-sm text-muted-foreground">
             Active plan: {quota.plan === "yearly" ? "Yearly" : "Monthly"} · Unlimited ad-free scans.
           </p>
-          <Button
-            variant="outline"
-            size="lg"
-            className="mt-5"
-            onClick={() => {
-              cancelPremium();
-              toast("Premium cancelled. You're back on the free plan.");
-            }}
-          >
-            Cancel Premium
-          </Button>
+          <p className="mt-4 text-xs text-muted-foreground">
+            Manage or cancel your subscription anytime from the billing link in your
+            payment confirmation email.
+          </p>
         </div>
       ) : (
         <>
@@ -106,9 +125,25 @@ function Premium() {
             />
           </div>
 
-          <Button variant="hero" size="xl" className="w-full" onClick={subscribe}>
-            <Crown className="h-5 w-5" />
-            Subscribe — {PRICING[selected].price}/{PRICING[selected].period}
+          <Button
+            variant="hero"
+            size="xl"
+            className="w-full"
+            onClick={subscribe}
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : user ? (
+              <Crown className="h-5 w-5" />
+            ) : (
+              <LogIn className="h-5 w-5" />
+            )}
+            {loading
+              ? "Opening secure checkout…"
+              : user
+                ? `Subscribe — ${PRICING[selected].price}/${PRICING[selected].period}`
+                : "Sign in to subscribe"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
             Free plan includes 2 scans per day plus rewarded ads.

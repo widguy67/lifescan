@@ -16,6 +16,7 @@ import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ScanIdRouteImport } from './routes/scan.$id'
+import { Route as ApiPublicWebhooksLemonsqueezyRouteImport } from './routes/api/public/webhooks/lemonsqueezy'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -52,6 +53,12 @@ const ScanIdRoute = ScanIdRouteImport.update({
   path: '/scan/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksLemonsqueezyRoute =
+  ApiPublicWebhooksLemonsqueezyRouteImport.update({
+    id: '/api/public/webhooks/lemonsqueezy',
+    path: '/api/public/webhooks/lemonsqueezy',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/premium': typeof PremiumRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/scan/$id': typeof ScanIdRoute
+  '/api/public/webhooks/lemonsqueezy': typeof ApiPublicWebhooksLemonsqueezyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +78,7 @@ export interface FileRoutesByTo {
   '/premium': typeof PremiumRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/scan/$id': typeof ScanIdRoute
+  '/api/public/webhooks/lemonsqueezy': typeof ApiPublicWebhooksLemonsqueezyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +89,7 @@ export interface FileRoutesById {
   '/premium': typeof PremiumRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/scan/$id': typeof ScanIdRoute
+  '/api/public/webhooks/lemonsqueezy': typeof ApiPublicWebhooksLemonsqueezyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +101,7 @@ export interface FileRouteTypes {
     | '/premium'
     | '/sitemap.xml'
     | '/scan/$id'
+    | '/api/public/webhooks/lemonsqueezy'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +111,7 @@ export interface FileRouteTypes {
     | '/premium'
     | '/sitemap.xml'
     | '/scan/$id'
+    | '/api/public/webhooks/lemonsqueezy'
   id:
     | '__root__'
     | '/'
@@ -109,6 +121,7 @@ export interface FileRouteTypes {
     | '/premium'
     | '/sitemap.xml'
     | '/scan/$id'
+    | '/api/public/webhooks/lemonsqueezy'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +132,7 @@ export interface RootRouteChildren {
   PremiumRoute: typeof PremiumRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ScanIdRoute: typeof ScanIdRoute
+  ApiPublicWebhooksLemonsqueezyRoute: typeof ApiPublicWebhooksLemonsqueezyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +186,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScanIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/lemonsqueezy': {
+      id: '/api/public/webhooks/lemonsqueezy'
+      path: '/api/public/webhooks/lemonsqueezy'
+      fullPath: '/api/public/webhooks/lemonsqueezy'
+      preLoaderRoute: typeof ApiPublicWebhooksLemonsqueezyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +204,7 @@ const rootRouteChildren: RootRouteChildren = {
   PremiumRoute: PremiumRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ScanIdRoute: ScanIdRoute,
+  ApiPublicWebhooksLemonsqueezyRoute: ApiPublicWebhooksLemonsqueezyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
